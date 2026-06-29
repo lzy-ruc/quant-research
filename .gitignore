@@ -1,0 +1,45 @@
+# macOS / editor noise
+.DS_Store
+._*
+.vscode/
+.idea/
+
+# Python caches and environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+
+# Local data stores and large research artifacts
+data/
+cache/
+.cache/
+*.duckdb
+*.sqlite
+*.sqlite3
+*.db
+*.parquet
+*.feather
+*.pkl
+*.pickle
+
+# Generated scratch output
+out/
+tmp/
+logs/
+*.log
+
+# Notebook checkpoints
+.ipynb_checkpoints/
