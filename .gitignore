@@ -24,6 +24,9 @@ env/
 
 # Local data stores and large research artifacts
 data/
+!courses/lecture-2/task-2/data/
+!courses/lecture-2/task-2/data/*.csv
+!courses/lecture-2/task-2/data/*.json
 cache/
 .cache/
 *.duckdb

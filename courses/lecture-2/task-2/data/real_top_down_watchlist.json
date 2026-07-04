@@ -1,0 +1,174 @@
+{
+  "analysis_date": "2026-07-03",
+  "current_date": "2026-07-04",
+  "latest_trading_day_note": "2026-07-04 is Saturday, so 2026-07-03 is used as the latest trading day.",
+  "data_sources": [
+    "Eastmoney public market endpoints for industry ranking and constituent snapshots",
+    "Tushare MCP daily bars for selected and alternative stock verification",
+    "Fuyao API was acknowledged as a possible supplemental source; the key was not persisted to files"
+  ],
+  "candidate_pool": {
+    "hot_industries": 5,
+    "unique_constituents": 129,
+    "filtered_candidates_after_liquidity_and_risk_rules": 75,
+    "scored_candidates_reviewed": 30,
+    "tushare_daily_verified_tickers": 10,
+    "final_watchlist_count": 5
+  },
+  "industry_ranking": [
+    {
+      "rank": 1,
+      "board_code": "BK1295",
+      "board_name": "其他数字媒体",
+      "ret_20d": 0.1285,
+      "ret_60d": 0.5854,
+      "ret_120d": 0.6607,
+      "relative_60d_vs_csi300": 0.4950,
+      "trend": "MA20 > MA60"
+    },
+    {
+      "rank": 2,
+      "board_code": "BK1408",
+      "board_name": "机器人",
+      "ret_20d": 0.2017,
+      "ret_60d": 0.4513,
+      "ret_120d": 0.1756,
+      "relative_60d_vs_csi300": 0.3609,
+      "trend": "MA20 > MA60"
+    },
+    {
+      "rank": 3,
+      "board_code": "BK1396",
+      "board_name": "金属制品",
+      "ret_20d": 0.0300,
+      "ret_60d": 0.0984,
+      "ret_120d": 0.0679,
+      "relative_60d_vs_csi300": 0.0080,
+      "trend": "MA20 < MA60"
+    },
+    {
+      "rank": 4,
+      "board_code": "BK1307",
+      "board_name": "电机III",
+      "ret_20d": -0.0176,
+      "ret_60d": 0.0868,
+      "ret_120d": -0.0101,
+      "relative_60d_vs_csi300": -0.0036,
+      "trend": "MA20 < MA60"
+    },
+    {
+      "rank": 5,
+      "board_code": "BK1030",
+      "board_name": "电机II",
+      "ret_20d": -0.0176,
+      "ret_60d": 0.0868,
+      "ret_120d": -0.0101,
+      "relative_60d_vs_csi300": -0.0036,
+      "trend": "MA20 < MA60"
+    }
+  ],
+  "final_watchlist": [
+    {
+      "ts_code": "603466.SH",
+      "name": "风语筑",
+      "industry": "其他数字媒体",
+      "close_20260401": 9.38,
+      "close_20260703": 11.63,
+      "return_20260401_to_20260703": 0.2399,
+      "pct_chg_20260703": 0.1003,
+      "snapshot_turnover_yuan": 1014371456.0,
+      "market_cap_yuan": 6917855362,
+      "pe_ttm_snapshot": 40.59,
+      "main_net_inflow_yuan": 110214909.0,
+      "selection_reason": "Strongest industry exposure, positive net inflow, acceptable valuation versus other theme candidates.",
+      "status": "Watch after limit-up; wait for turnover and pullback confirmation."
+    },
+    {
+      "ts_code": "002747.SZ",
+      "name": "埃斯顿",
+      "industry": "机器人",
+      "close_20260401": 20.25,
+      "close_20260703": 44.77,
+      "return_20260401_to_20260703": 1.2111,
+      "pct_chg_20260703": 0.1000,
+      "snapshot_turnover_yuan": 5508068594.23,
+      "market_cap_yuan": 43328336741,
+      "pe_ttm_snapshot": 110.72,
+      "main_net_inflow_yuan": 401870432.0,
+      "selection_reason": "Robotics core candidate with strong interval momentum and large positive net inflow.",
+      "status": "Core momentum name; avoid chasing and wait for post-divergence support."
+    },
+    {
+      "ts_code": "002979.SZ",
+      "name": "雷赛智能",
+      "industry": "机器人",
+      "close_20260401": 36.50,
+      "close_20260703": 69.55,
+      "return_20260401_to_20260703": 0.9055,
+      "pct_chg_20260703": 0.1000,
+      "snapshot_turnover_yuan": 383958077.75,
+      "market_cap_yuan": 21977574032,
+      "pe_ttm_snapshot": 76.18,
+      "main_net_inflow_yuan": 60341927.0,
+      "selection_reason": "Strong robotics motion-control exposure with high but less extreme valuation than several alternatives.",
+      "status": "Trend candidate; watch pullback that holds the short-term platform."
+    },
+    {
+      "ts_code": "603416.SH",
+      "name": "信捷电气",
+      "industry": "机器人",
+      "close_20260401": 49.01,
+      "close_20260703": 60.88,
+      "return_20260401_to_20260703": 0.2422,
+      "pct_chg_20260703": 0.0169,
+      "snapshot_turnover_yuan": 628563247.0,
+      "market_cap_yuan": 9556683843,
+      "pe_ttm_snapshot": 43.94,
+      "main_net_inflow_yuan": 48374822.0,
+      "selection_reason": "Automation-control candidate with less extreme one-day crowding and more moderate PE.",
+      "status": "Relatively balanced watchlist member; monitor follow-through and industry beta."
+    },
+    {
+      "ts_code": "300607.SZ",
+      "name": "拓斯达",
+      "industry": "机器人",
+      "close_20260401": 25.72,
+      "close_20260703": 52.96,
+      "return_20260401_to_20260703": 1.0591,
+      "pct_chg_20260703": 0.1355,
+      "snapshot_turnover_yuan": 4594583901.94,
+      "market_cap_yuan": 25260458940,
+      "pe_ttm_snapshot": 131.34,
+      "main_net_inflow_yuan": 131914320.0,
+      "selection_reason": "High-beta robotics and smart-manufacturing candidate with strong interval momentum and high liquidity.",
+      "status": "High-volatility candidate; wait for second confirmation and use strict risk control."
+    }
+  ],
+  "excluded_or_backup": [
+    {
+      "ts_code": "688017.SH",
+      "name": "绿的谐波",
+      "reason": "Very strong but PE around 685 and 2026-07-03 single-day gain around 18.15%; treated as a sector barometer."
+    },
+    {
+      "ts_code": "688090.SH",
+      "name": "瑞松科技",
+      "reason": "Strong interval return but PE around 199 and snapshot net outflow around 0.61 billion yuan."
+    },
+    {
+      "ts_code": "002698.SZ",
+      "name": "博实股份",
+      "reason": "Valuation is reasonable, but the 2026-04-01 to 2026-07-03 return was only about 2.0%, weaker than the final momentum names."
+    },
+    {
+      "ts_code": "300024.SZ",
+      "name": "机器人",
+      "reason": "High thematic recognition and liquidity, but negative PE and weaker earnings visibility."
+    },
+    {
+      "ts_code": "301313.SZ",
+      "name": "凡拓数创",
+      "reason": "Belongs to the strongest digital-media industry, but PE is negative and snapshot net flow was negative."
+    }
+  ]
+}

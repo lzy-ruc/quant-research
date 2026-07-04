@@ -1,0 +1,6 @@
+﻿code,name,rows,start_date,end_date,raw_missing_cells,duplicate_code_date_rows,missing_trade_dates,ohlc_violation_rows,nonpositive_price_rows,negative_volume_rows,negative_amount_rows,paused_days,extreme_abs_ret_gt_20pct_rows
+002747.SZ,埃斯顿,362,20250102,20260703,724,0,0,0,0,0,0,0,0
+002979.SZ,雷赛智能,362,20250102,20260703,724,0,0,0,0,0,0,0,0
+300607.SZ,拓斯达,362,20250102,20260703,724,0,0,0,0,0,0,0,3
+603416.SH,信捷电气,362,20250102,20260703,724,0,0,0,0,0,0,0,0
+603466.SH,风语筑,362,20250102,20260703,724,0,0,0,0,0,0,0,0

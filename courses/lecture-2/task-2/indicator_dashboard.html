@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <meta http-equiv="Pragma" content="no-cache">
+  <title>五标的技术指标看板</title>
+  <link rel="stylesheet" href="indicator_dashboard.css?v=20260704_fix2">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <h1>五标的技术指标看板</h1>
+        <p id="dataMeta">加载中...</p>
+      </div>
+      <div class="range-control" role="group" aria-label="时间范围">
+        <button type="button" data-range="60">3M</button>
+        <button type="button" data-range="120" class="active">6M</button>
+        <button type="button" data-range="240">1Y</button>
+        <button type="button" data-range="all">全部</button>
+      </div>
+    </header>
+
+    <nav class="stock-tabs" id="stockTabs" aria-label="股票切换"></nav>
+
+    <section class="summary-grid" id="summaryGrid"></section>
+
+    <section class="workspace">
+      <section class="chart-area">
+        <div class="panel panel-main">
+          <div class="panel-head">
+            <div>
+              <h2 id="stockTitle">--</h2>
+              <p id="stockSubtitle">--</p>
+            </div>
+            <div class="legend">
+              <span><i class="line close"></i>收盘</span>
+              <span><i class="line upper"></i>BOLL 上轨</span>
+              <span><i class="line mid"></i>BOLL 中轨</span>
+              <span><i class="line lower"></i>BOLL 下轨</span>
+            </div>
+          </div>
+          <canvas id="priceCanvas" height="280" data-height="280"></canvas>
+        </div>
+
+        <div class="mini-grid">
+          <div class="panel">
+            <div class="panel-head compact">
+              <h3>RSI14</h3>
+              <span id="rsiNote">--</span>
+            </div>
+            <canvas id="rsiCanvas" height="150" data-height="150"></canvas>
+          </div>
+          <div class="panel">
+            <div class="panel-head compact">
+              <h3>MACD</h3>
+              <span id="macdNote">--</span>
+            </div>
+            <canvas id="macdCanvas" height="150" data-height="150"></canvas>
+          </div>
+          <div class="panel">
+            <div class="panel-head compact">
+              <h3>KDJ</h3>
+              <span id="kdjNote">--</span>
+            </div>
+            <canvas id="kdjCanvas" height="150" data-height="150"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <aside class="detail-panel">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>最新截面</h2>
+            <span id="latestDate">--</span>
+          </div>
+          <dl class="metric-list" id="latestMetrics"></dl>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>入选信息</h2>
+          </div>
+          <dl class="metric-list" id="selectionInfo"></dl>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="indicator_dashboard.js?v=20260704_fix2"></script>
+</body>
+</html>
