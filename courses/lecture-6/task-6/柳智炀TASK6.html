@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Lecture 6 TASK6：季度横截面收益排序、Top30 组合回测、模型比较与中芯国际日线附加实验。">
+  <title>柳智炀TASK6｜机器学习定制专属策略</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f3f5f7;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --text: #18202a;
+      --muted: #5d6978;
+      --line: #d8dee7;
+      --accent: #9f3415;
+      --accent-soft: #fff2e8;
+      --good: #087f5b;
+      --warn: #a15c00;
+      --danger: #b42318;
+      --series-1: #a63d18;
+      --series-2: #e07a2d;
+      --series-3: #2563eb;
+      --series-4: #168173;
+      --series-5: #202a3a;
+      --shadow: 0 18px 45px rgba(24, 32, 42, .10);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #10151c;
+        --surface: #171e27;
+        --surface-soft: #1d2631;
+        --text: #edf1f6;
+        --muted: #aab5c3;
+        --line: #364250;
+        --accent: #ffad7d;
+        --accent-soft: #38251d;
+        --good: #6ee7b7;
+        --warn: #fbbf24;
+        --danger: #fda29b;
+        --series-1: #ff9b70;
+        --series-2: #f6b45d;
+        --series-3: #79a7ff;
+        --series-4: #5dd1c1;
+        --series-5: #d7dee8;
+        --shadow: none;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Songti SC", "Noto Serif CJK SC", "SimSun", serif;
+      font-size: 16px;
+      line-height: 1.75;
+    }
+    a { color: var(--accent); }
+    .shell { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
+    .site-nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      padding: 16px 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+    }
+    .site-nav a { text-decoration: none; }
+    .site-nav .crumb { color: var(--muted); }
+    .hero {
+      background: linear-gradient(135deg, #6f1d0e, #b4481e 58%, #dc733e);
+      color: #fff7ed;
+      padding: 52px 0 46px;
+      border-bottom: 1px solid rgba(255, 255, 255, .15);
+    }
+    .eyebrow {
+      margin: 0 0 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      opacity: .85;
+    }
+    h1, h2, h3 { line-height: 1.3; }
+    h1 { max-width: 900px; margin: 0; font-size: clamp(32px, 5vw, 54px); font-weight: 700; }
+    .hero .subtitle { max-width: 820px; margin: 18px 0 0; font-size: 18px; opacity: .92; }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    .hero-meta span {
+      padding: 4px 10px;
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+      font-size: 13px;
+    }
+    main { margin: 26px auto 50px; }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: -52px 0 28px;
+      position: relative;
+    }
+    .stat {
+      min-width: 0;
+      padding: 17px 18px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .stat span { display: block; color: var(--muted); font-size: 13px; }
+    .stat strong { display: block; margin: 2px 0; font: 700 27px/1.25 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .stat small { color: var(--muted); font-size: 12px; }
+    article {
+      padding: 34px clamp(20px, 5vw, 62px) 44px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    h2 {
+      margin: 40px 0 14px;
+      padding-bottom: 7px;
+      border-bottom: 2px solid var(--accent);
+      color: var(--accent);
+      font-size: 26px;
+    }
+    h2:first-child { margin-top: 0; }
+    h3 { margin: 25px 0 9px; font-size: 19px; }
+    p { margin: 0 0 13px; text-align: justify; }
+    .lead { font-size: 18px; }
+    .callout {
+      margin: 18px 0;
+      padding: 14px 16px;
+      border-left: 4px solid var(--accent);
+      background: var(--accent-soft);
+    }
+    .callout p { margin: 0; text-indent: 0; }
+    .callout p + p { margin-top: 7px; }
+    .method-flow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 18px 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+    }
+    .method-flow div { padding: 13px; background: var(--surface-soft); border-top: 3px solid var(--accent); }
+    .method-flow b { display: block; margin-bottom: 4px; }
+    .method-flow span { color: var(--muted); font-size: 13px; }
+    figure { margin: 24px 0 30px; }
+    figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); background: var(--surface-soft); }
+    figcaption { margin-top: 8px; color: var(--muted); text-align: center; font-size: 14px; }
+    .table-wrap { width: 100%; overflow-x: auto; margin: 12px 0 22px; }
+    table { width: 100%; min-width: 700px; border-collapse: collapse; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif; font-size: 14px; }
+    caption { padding: 0 0 8px; color: var(--muted); text-align: center; font-family: "Songti SC", serif; }
+    th, td { padding: 9px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+    th { color: var(--accent); background: var(--surface-soft); font-weight: 700; }
+    th:first-child, td:first-child { text-align: left; }
+    tr.best td { color: var(--good); font-weight: 700; }
+    .positive { color: var(--good); }
+    .negative { color: var(--danger); }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 12px 0 18px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+    }
+    .controls span { color: var(--muted); margin-right: 4px; }
+    button {
+      appearance: none;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--surface);
+      color: var(--text);
+      padding: 7px 12px;
+      font: inherit;
+      cursor: pointer;
+    }
+    button:hover, button:focus-visible { border-color: var(--accent); }
+    button[aria-pressed="true"] { background: var(--accent); color: var(--surface); border-color: var(--accent); }
+    .cost-chart { margin: 0 0 24px; }
+    .bar-row {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr) 72px;
+      gap: 10px;
+      align-items: center;
+      margin: 11px 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+      font-size: 14px;
+    }
+    .track { height: 18px; background: var(--surface-soft); border-bottom: 1px solid var(--line); }
+    .bar { height: 100%; min-width: 2px; background: var(--series-1); transition: width .25s ease; }
+    .bar-row:nth-child(2) .bar { background: var(--series-2); }
+    .bar-row:nth-child(3) .bar { background: var(--series-3); }
+    .bar-row:nth-child(4) .bar { background: var(--series-4); }
+    .bar-value { text-align: right; font-variant-numeric: tabular-nums; }
+    .footnote { color: var(--muted); font-size: 13px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+    ul, ol { margin: 8px 0 18px; padding-left: 24px; }
+    li { margin: 6px 0; }
+    code { padding: 1px 4px; background: var(--surface-soft); font-family: Menlo, Consolas, monospace; font-size: .92em; }
+    .closing {
+      margin-top: 42px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+    }
+    @media (max-width: 860px) {
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: -36px; }
+      .method-flow, .two-col { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 560px) {
+      .shell { width: min(100% - 20px, 1120px); }
+      .hero { padding: 38px 0 34px; }
+      .hero .subtitle { font-size: 16px; }
+      .summary-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .stat { padding: 13px; }
+      .stat strong { font-size: 22px; }
+      article { padding: 25px 15px 32px; border-radius: 8px; }
+      h2 { font-size: 23px; }
+      .method-flow, .two-col { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 74px minmax(0, 1fr) 58px; gap: 7px; }
+    }
+    @media print {
+      :root { --bg: #fff; --surface: #fff; --text: #111; --muted: #555; --line: #bbb; --accent: #8c2f12; }
+      body { background: #fff; }
+      .site-nav, .controls { display: none; }
+      .hero { padding: 24px 0; }
+      .summary-grid { margin-top: 18px; }
+      article, .stat { box-shadow: none; }
+      figure, table, .callout { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="site-nav shell" aria-label="站点导航">
+    <a href="../../../index.html">← 量化研究主页</a>
+    <span class="crumb">Lecture 6 · TASK6</span>
+  </nav>
+
+  <header class="hero">
+    <div class="shell">
+      <p class="eyebrow">Machine Learning · Cross-sectional Ranking · Backtest</p>
+      <h1>智能决策者：用机器学习定制专属策略</h1>
+      <p class="subtitle">柳智炀 · 季度横截面收益排序、Top30 等权组合、交易成本与样本外回测</p>
+      <div class="hero-meta" aria-label="实验设定">
+        <span>固定随机种子 42</span>
+        <span>训练期 2020Q1—2021Q2</span>
+        <span>测试期 2021Q3—2022Q2</span>
+        <span>主成本 0.20% × 换手率</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="summary-grid" aria-label="关键结果">
+      <div class="stat"><span>季度截面样本</span><strong>39,616</strong><small>4,281 只股票 · 10 个季度</small></div>
+      <div class="stat"><span>模型特征</span><strong>22</strong><small>19 个原始排名 + 3 个综合因子</small></div>
+      <div class="stat"><span>最高平均 Rank IC</span><strong>0.1953</strong><small>直方图梯度提升</small></div>
+      <div class="stat"><span>最高成本后收益</span><strong>40.62%</strong><small>岭回归；市场同期 −6.35%</small></div>
+    </section>
+
+    <article>
+      <h2>一、研究问题与实验边界</h2>
+      <p class="lead">机器学习模型不直接发出买卖指令，而是估计同一季度内股票未来收益的相对顺序。模型评分经过 Top30 筛选、等权配置、季度调仓、成本扣减和风险评价后，才形成可回测的交易策略。</p>
+      <div class="callout">
+        <p><strong>一次性时间外测试：</strong>前 6 个季度训练，后 4 个季度测试，不随机打乱，也不根据测试期结果重新调参。</p>
+        <p><strong>信息边界：</strong>课程数据没有真实财报公告日期、行业、停牌与涨跌停数据，因此这里只能把 <code>Date</code> 视为特征可得时点，不能把结果等同于真实可成交业绩。</p>
+      </div>
+      <div class="method-flow" aria-label="研究流程">
+        <div><b>1. 横截面排名</b><span>各季度内将 19 个原始因子转换为百分位</span></div>
+        <div><b>2. 排名学习</b><span>预测 Next_Ret 在当季的横截面百分位</span></div>
+        <div><b>3. Top30 组合</b><span>按预测分数选 30 只股票并等权持有</span></div>
+        <div><b>4. 样本外评估</b><span>比较 Rank IC、收益、换手、成本与风险</span></div>
+      </div>
+
+      <h2>二、数据诊断与特征工程</h2>
+      <p>主数据共 39,616 行、22 列，日期—代码重复 0 行、缺失 0 个、无穷值 0 个。Next_Ret 最小约 −79.99%、最大约 640.66%，估值和同比增长指标也具有明显长尾，因此原始数值不直接进入模型，而是先在每个季度内进行横截面百分位排名。</p>
+      <figure>
+        <img src="figures/fig1_data_diagnostics.png" alt="十个季度的股票样本量柱状图与 Next_Ret 箱线图" width="1800" height="713">
+        <figcaption>图1　主数据季度样本量与 Next_Ret 分布。样本量逐季增加，收益分布随市场阶段显著变化。</figcaption>
+      </figure>
+      <p>模型最终使用 22 个特征：19 个原始因子的季度排名、价值综合因子、成长综合因子和规模因子。非正估值指标在价值综合因子中按无效低分处理；应变量为每季度 Next_Ret 的横截面百分位排名，真实 Next_Ret 只用于测试期组合收益计算。</p>
+
+      <h2>三、四类模型的排序能力</h2>
+      <p>统一比较岭回归、决策树、随机森林和直方图梯度提升。参数在测试前固定：岭回归 <code>alpha=10</code>；决策树最大深度 5、叶节点最少 100；随机森林 300 棵树、最大深度 8；梯度提升 200 轮、学习率 0.05。</p>
+      <div class="table-wrap">
+        <table>
+          <caption>表1　测试期模型排序指标</caption>
+          <thead><tr><th>模型</th><th>MAE（排名）</th><th>RMSE（排名）</th><th>平均 Rank IC</th><th>IC 标准差</th><th>ICIR</th></tr></thead>
+          <tbody>
+            <tr class="best"><td>梯度提升</td><td>0.242</td><td>0.283</td><td>0.195</td><td>0.154</td><td>1.271</td></tr>
+            <tr><td>随机森林</td><td>0.242</td><td>0.284</td><td>0.190</td><td>0.154</td><td>1.234</td></tr>
+            <tr><td>岭回归</td><td>0.243</td><td>0.284</td><td>0.183</td><td>0.148</td><td>1.235</td></tr>
+            <tr><td>决策树</td><td>0.244</td><td>0.285</td><td>0.170</td><td>0.143</td><td>1.190</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figure>
+        <img src="figures/fig2_rank_ic.png" alt="四个模型在四个测试季度的 Spearman Rank IC 柱状图" width="1800" height="874">
+        <figcaption>图2　测试期各季度模型 Spearman Rank IC。2021Q3 全部为负，其后三个季度均转为正值。</figcaption>
+      </figure>
+      <div class="callout">
+        <p><strong>结论：</strong>梯度提升的全截面平均 Rank IC 最高，但所有模型在 2021Q3 同时失效，说明排序关系对市场状态敏感，四个测试季度不足以证明长期稳定性。</p>
+      </div>
+
+      <h2>四、Top30 交易策略与季度收益</h2>
+      <p>每个测试季度按预测分数降序选择 30 只股票，若分数并列则按代码排序，组合等权。市场基准是同季度全样本股票的等权平均 Next_Ret。首次建仓换手率为 100%，之后为 1 减去前后季度重合股票数除以 30；净收益等于毛收益减去成本率乘换手率。</p>
+      <div class="table-wrap">
+        <table>
+          <caption>表2　测试期季度收益（毛收益）</caption>
+          <thead><tr><th>季度</th><th>市场</th><th>岭回归</th><th>决策树</th><th>随机森林</th><th>梯度提升</th></tr></thead>
+          <tbody>
+            <tr><td>2021Q3</td><td class="positive">11.36%</td><td class="positive">6.18%</td><td class="negative">−3.43%</td><td class="negative">−3.64%</td><td class="negative">−2.01%</td></tr>
+            <tr><td>2021Q4</td><td class="negative">−8.37%</td><td class="positive">9.80%</td><td class="positive">2.23%</td><td class="positive">2.80%</td><td class="positive">6.13%</td></tr>
+            <tr><td>2022Q1</td><td class="positive">1.07%</td><td class="positive">18.97%</td><td class="positive">10.50%</td><td class="positive">21.31%</td><td class="positive">18.65%</td></tr>
+            <tr><td>2022Q2</td><td class="negative">−9.20%</td><td class="positive">1.95%</td><td class="negative">−3.45%</td><td class="negative">−0.19%</td><td class="positive">1.58%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figure>
+        <img src="figures/fig3_quarterly_returns.png" alt="Top30 组合和市场的季度收益比较图" width="1800" height="886">
+        <figcaption>图3　Top30 组合与市场季度收益。策略主要收益来自 2021Q4—2022Q2，不能忽视首季度失效。</figcaption>
+      </figure>
+      <figure>
+        <img src="figures/fig4_cumulative_nav.png" alt="四个 Top30 组合与市场的累计净值曲线" width="1800" height="886">
+        <figcaption>图4　按 0.20%×换手率扣费后的累计净值。岭回归最终净值最高，市场同期下跌。</figcaption>
+      </figure>
+
+      <h2>五、核心指标、换手与成本敏感性</h2>
+      <div class="table-wrap">
+        <table>
+          <caption>表3　0.20% 成本口径下的策略指标</caption>
+          <thead><tr><th>模型</th><th>累计收益</th><th>年化波动</th><th>夏普</th><th>最大回撤</th><th>胜率</th><th>平均换手</th><th>累计超额</th></tr></thead>
+          <tbody>
+            <tr class="best"><td>岭回归</td><td>40.62%</td><td>14.45%</td><td>2.51</td><td>0.00%</td><td>100%</td><td>77.50%</td><td>46.97%</td></tr>
+            <tr><td>梯度提升</td><td>24.55%</td><td>18.01%</td><td>1.31</td><td>−2.21%</td><td>75%</td><td>84.17%</td><td>30.90%</td></tr>
+            <tr><td>随机森林</td><td>19.20%</td><td>22.26%</td><td>0.88</td><td>−3.84%</td><td>50%</td><td>80.00%</td><td>25.55%</td></tr>
+            <tr><td>决策树</td><td>4.77%</td><td>13.22%</td><td>0.40</td><td>−3.63%</td><td>50%</td><td>66.67%</td><td>11.13%</td></tr>
+            <tr><td>市场等权平均</td><td>−6.35%</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>基准</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>交互查看成本敏感性</h3>
+      <div class="controls" role="group" aria-label="选择交易成本">
+        <span>单边成本率：</span>
+        <button type="button" data-cost="0bp" aria-pressed="false">0%</button>
+        <button type="button" data-cost="20bp" aria-pressed="true">0.20%</button>
+        <button type="button" data-cost="50bp" aria-pressed="false">0.50%</button>
+      </div>
+      <div id="cost-chart" class="cost-chart" role="img" aria-label="不同成本率下四个模型的累计收益柱状图">
+        <div class="bar-row" data-model="ridge"><span>岭回归</span><div class="track"><div class="bar"></div></div><strong class="bar-value"></strong></div>
+        <div class="bar-row" data-model="hist_gradient_boosting"><span>梯度提升</span><div class="track"><div class="bar"></div></div><strong class="bar-value"></strong></div>
+        <div class="bar-row" data-model="random_forest"><span>随机森林</span><div class="track"><div class="bar"></div></div><strong class="bar-value"></strong></div>
+        <div class="bar-row" data-model="decision_tree"><span>决策树</span><div class="track"><div class="bar"></div></div><strong class="bar-value"></strong></div>
+      </div>
+      <p class="footnote" id="cost-note" aria-live="polite"></p>
+      <figure>
+        <img src="figures/fig5_drawdown_cost.png" alt="季度频率回撤曲线与三档成本敏感性柱状图" width="1800" height="743">
+        <figcaption>图5　季度频率回撤与成本敏感性。成本提高会单调压低各模型净值，但不会改变本测试期的相对排序。</figcaption>
+      </figure>
+      <p>岭回归的季度最大回撤为 0，只表示四个季末净值点之间没有下降，不能说明季度内部风险为 0。真实交易还需计入佣金最低收费、印花税、滑点、停牌、涨跌停和市场冲击。</p>
+
+      <h2>六、模型解释：预测指标与策略指标并不等价</h2>
+      <div class="two-col">
+        <div>
+          <h3>全截面排序</h3>
+          <p>梯度提升平均 Rank IC 最高，说明它更善于对四千余只股票做整体排序。随机森林也明显优于单棵决策树，集成方法缓解了单树对市场阶段变化的敏感性。</p>
+        </div>
+        <div>
+          <h3>极端头部收益</h3>
+          <p>Top30 经济收益最高的却是岭回归，说明“全市场平均排序能力”与“排名最前 30 只股票的收益”并不完全一致。模型选择必须同时比较 IC、组合收益、换手和风险。</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <caption>表4　随机森林前 10 项特征重要性</caption>
+          <thead><tr><th>排名</th><th>特征</th><th>重要性</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>基本每股收益（同比增长率）</td><td>0.1812</td></tr>
+            <tr><td>2</td><td>市净率 PB（MRQ）</td><td>0.0980</td></tr>
+            <tr><td>3</td><td>净利润同比增长率</td><td>0.0970</td></tr>
+            <tr><td>4</td><td>企业倍数（EV/EBITDA）</td><td>0.0637</td></tr>
+            <tr><td>5</td><td>营业利润同比增长率</td><td>0.0501</td></tr>
+            <tr><td>6</td><td>MV</td><td>0.0429</td></tr>
+            <tr><td>7</td><td>利润总额同比增长率</td><td>0.0427</td></tr>
+            <tr><td>8</td><td>size_score</td><td>0.0409</td></tr>
+            <tr><td>9</td><td>value_composite</td><td>0.0374</td></tr>
+            <tr><td>10</td><td>净资产同比增长率</td><td>0.0366</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="footnote">树不纯度重要性描述模型使用变量进行分裂的频率，不代表因果关系，并可能偏向可分裂点较多的变量。</p>
+
+      <h2>七、附加题：中芯国际日线方向模型</h2>
+      <p>附加实验使用中芯国际 688981.SH 的 237 条本地日线，完成日期、重复、OHLC 逻辑、缺失和异常收益检查后，以 20 日窗口构造动量、MA5/MA20、RSI14、5/20 日波动率、ATR14、量比和成交额比等 12 个特征，得到 215 个可用样本。</p>
+      <p>第 t 日收盘后计算特征，目标是 <code>open[t+2] / open[t+1] − 1 &gt; 0</code>，最早在 t+1 日开盘执行并持有到 t+2 日开盘。前 70% 训练、后 30% 测试；上涨概率不低于 0.55 且 MA5&gt;MA20 时持有，概率不高于 0.45 或趋势失败时空仓。</p>
+      <div class="table-wrap">
+        <table>
+          <caption>表5　附加题测试期分类与策略结果</caption>
+          <thead><tr><th>模型</th><th>AUC</th><th>平衡准确率</th><th>F1</th><th>成本后累计收益</th><th>夏普</th><th>市场暴露</th><th>入场次数</th></tr></thead>
+          <tbody>
+            <tr><td>随机森林</td><td>0.465</td><td>0.463</td><td>0.426</td><td>−3.57%</td><td>−0.77</td><td>13.85%</td><td>5</td></tr>
+            <tr><td>决策树</td><td>0.458</td><td>0.452</td><td>0.143</td><td>1.12%</td><td>1.53</td><td>3.08%</td><td>1</td></tr>
+            <tr><td>逻辑回归</td><td>0.431</td><td>0.449</td><td>0.308</td><td>3.00%</td><td>0.52</td><td>12.31%</td><td>3</td></tr>
+            <tr class="best"><td>买入持有</td><td>—</td><td>—</td><td>—</td><td>53.36%</td><td>3.00</td><td>100%</td><td>1</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figure>
+        <img src="figures/fig6_bonus_results.png" alt="附加题三模型 AUC 与策略、买入持有净值曲线" width="1800" height="743">
+        <figcaption>图6　附加题样本外 AUC 与策略净值。三个模型 AUC 均低于 0.5，且明显落后于同期买入持有。</figcaption>
+      </figure>
+      <div class="callout">
+        <p><strong>有价值的负结果：</strong>短样本单股票方向模型没有可验证的预测优势。测试期又处于明显单边上涨阶段，低市场暴露使择时策略错失主要行情，证明“机器学习策略一定优于简单基准”并不成立。</p>
+      </div>
+
+      <h2>八、结论、局限与复现检查</h2>
+      <ul>
+        <li>季度基本面与估值因子对未来横截面收益具有一定排序信息，但 2021Q3 所有模型负 IC，稳定性不足。</li>
+        <li>梯度提升的全截面 Rank IC 最高，岭回归的 Top30 经济收益最高，预测指标与策略指标必须联合评价。</li>
+        <li>成本敏感性没有改变本测试期相对结论，但真实成本与成交约束可能明显降低收益。</li>
+        <li>测试期只有四个季度，季度净值无法反映季内真实最大回撤，结果不能外推为长期有效性。</li>
+      </ul>
+      <h3>复现与质量控制</h3>
+      <ul>
+        <li>主数据 SHA256：<code>ac54f1f78a6f1f9b17c3e87c7a6634cede827ffcfddd89dfa4c4c06363e8bead</code></li>
+        <li>固定随机种子 42；完整流程重复运行后，预测、持仓、季度收益与模型指标 CSV 哈希完全一致。</li>
+        <li>8 项自动化测试全部通过，覆盖时间切分、目标泄漏、Top30 数量与权重、换手边界、成本单调性、Rank IC、回撤和附加题执行时点。</li>
+      </ul>
+      <p class="closing">历史课程研究，仅用于学习与方法展示，不构成投资建议。© 2026 柳智炀</p>
+    </article>
+  </main>
+
+  <script>
+    (() => {
+      const data = {
+        "0bp": { ridge: 41.415, hist_gradient_boosting: 25.342, random_forest: 19.930, decision_tree: 5.329 },
+        "20bp": { ridge: 40.617, hist_gradient_boosting: 24.546, random_forest: 19.199, decision_tree: 4.771 },
+        "50bp": { ridge: 39.425, hist_gradient_boosting: 23.358, random_forest: 18.107, decision_tree: 3.939 }
+      };
+      const labels = { "0bp": "0%", "20bp": "0.20%", "50bp": "0.50%" };
+      const buttons = [...document.querySelectorAll("[data-cost]")];
+      const rows = [...document.querySelectorAll("#cost-chart .bar-row")];
+      const note = document.getElementById("cost-note");
+
+      function render(key) {
+        const values = data[key];
+        const max = Math.max(...Object.values(values));
+        rows.forEach((row) => {
+          const value = values[row.dataset.model];
+          row.querySelector(".bar").style.width = `${Math.max(2, value / max * 100)}%`;
+          row.querySelector(".bar-value").textContent = `${value.toFixed(2)}%`;
+        });
+        buttons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.cost === key)));
+        note.textContent = `当前成本率 ${labels[key]}：岭回归累计收益 ${values.ridge.toFixed(2)}%，梯度提升 ${values.hist_gradient_boosting.toFixed(2)}%。`;
+      }
+
+      buttons.forEach((button) => button.addEventListener("click", () => render(button.dataset.cost)));
+      render("20bp");
+    })();
+  </script>
+</body>
+</html>
