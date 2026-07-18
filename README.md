@@ -13,6 +13,7 @@ Personal quant research workspace for A-share data analysis, technical indicator
   - [真实自上而下选股报告](courses/lecture-2/task-2/真实自上而下选股报告.md)
 - [Lecture 3 Task 3 双均线策略回测报告](courses/lecture-3/task-3/Task3_双均线策略回测报告.html)
 - [Lecture 4 Task 4 海龟突破策略与双均线比较](courses/lecture-4/task-4/Task4_海龟策略回测与双均线比较.html)
+- [Lecture 5 Task 5 机器学习分类与多周期实验](courses/lecture-5/task-5/柳智炀TASK5.html)
 
 ## GitHub Pages
 
